@@ -4,7 +4,6 @@ In very early development.
 
 TODO
 
-- actually build a first working version
 - document how to build and how to run/use
 - badges
 - tests
