@@ -1,0 +1,3 @@
+# {{ genmsg }}
+
+This is the file for environment {{ envname }}.

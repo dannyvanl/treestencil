@@ -1,0 +1,10 @@
+version: 0
+template-dir: ./template
+
+targets:
+
+  - env1:
+      envname: environment 1
+
+  - env2:
+      envname: environment 2
