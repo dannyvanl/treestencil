@@ -3,10 +3,12 @@ template-dir: ./template
 
 targets:
 
-  env1:
+  env 1:
+    dir: env1
     vars:
       envname: environment 1
 
-  env2:
+  env 2:
+    dir: env2
     vars:
       envname: environment 2
