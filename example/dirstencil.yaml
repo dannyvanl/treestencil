@@ -1,10 +1,12 @@
-version: 0
+version: 1
 template-dir: ./template
 
 targets:
 
-  - env1:
+  env1:
+    vars:
       envname: environment 1
 
-  - env2:
+  env2:
+    vars:
       envname: environment 2

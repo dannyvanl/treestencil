@@ -7,8 +7,14 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+type target struct {
+	Vars map[string]string `yaml:"vars"`
+}
+
 type configuration struct {
-	Version int64 `yaml:"version"`
+	Version     int64             `yaml:"version"`
+	TemplateDir string            `yaml:"template-dir"`
+	Targets     map[string]target `yaml:"targets"`
 }
 
 func loadConfig(configFile string) configuration {
@@ -24,10 +30,18 @@ func loadConfig(configFile string) configuration {
 	return conf
 }
 
+func processTarget(name string, t target, templateDir string) {
+	log.Println("Processing target", name)
+}
+
 func main() {
 	configFile := "dirstencil.yaml"
 	log.Println("Loading config from", configFile)
 	conf := loadConfig(configFile)
-	log.Println("Found configuration with version", conf.Version)
+	log.Println("Found configuration with version", conf.Version, "and template dir", conf.TemplateDir)
+
+	for name, target := range conf.Targets {
+		processTarget(name, target, conf.TemplateDir)
+	}
 
 }
