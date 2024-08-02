@@ -11,6 +11,11 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+type delims struct {
+	Left  string `yaml:"left"`
+	Right string `yaml:"right"`
+}
+
 type target struct {
 	Dir  string            `yaml:"dir"`
 	Vars map[string]string `yaml:"vars"`
@@ -19,10 +24,16 @@ type target struct {
 type configuration struct {
 	Version     int64             `yaml:"version"`
 	TemplateDir string            `yaml:"template-dir"`
+	Delims      delims            `yaml:"delims"`
 	Targets     map[string]target `yaml:"targets"`
 }
 
-func loadConfig(configFile string) configuration {
+type renderer struct {
+	config configuration
+}
+
+func (r *renderer) loadConfig(configFile string) {
+	log.Println("Loading config from", configFile)
 	file, err := os.ReadFile(configFile)
 	if err != nil {
 		log.Fatalf("Failed to read configuration from %s: %s", configFile, err)
@@ -32,15 +43,16 @@ func loadConfig(configFile string) configuration {
 	if err != nil {
 		log.Fatalf("Failed to unmarshall configuraton from %s: %s", configFile, err)
 	}
-	return conf
+	log.Println("Found configuration with version", conf.Version, "and template dir", conf.TemplateDir)
+	r.config = conf
 }
 
-func processTarget(name string, t target, templateDir string) {
+func (r *renderer) processTarget(name string, t target) {
 	log.Println("Processing target", name)
-	processTemplateDirForTarget(name, t, templateDir, "")
+	r.processTemplateDirForTarget(name, t, r.config.TemplateDir, "")
 }
 
-func processTemplateDirForTarget(name string, t target, baseDir string, subDir string) {
+func (r *renderer) processTemplateDirForTarget(name string, t target, baseDir string, subDir string) {
 	targetDir := path.Join(t.Dir, subDir)
 	log.Println("Ensuring dir", targetDir, "exists for", name)
 	if err := os.MkdirAll(targetDir, os.ModePerm); err != nil {
@@ -55,20 +67,22 @@ func processTemplateDirForTarget(name string, t target, baseDir string, subDir s
 	for _, entry := range entries {
 		log.Println("Processing", entry.Name(), "in", dir, "for", name)
 		if entry.IsDir() {
-			processTemplateDirForTarget(name, t, baseDir, path.Join(subDir, entry.Name()))
+			r.processTemplateDirForTarget(name, t, baseDir, path.Join(subDir, entry.Name()))
 		} else {
-			renderTemplateForTarget(name, t, baseDir, subDir, entry.Name())
+			r.renderTemplateForTarget(name, t, baseDir, subDir, entry.Name())
 		}
 
 	}
 }
 
-func renderTemplateForTarget(name string, t target, baseDir string, subDir string, file string) {
+func (r *renderer) renderTemplateForTarget(name string, t target, baseDir string, subDir string, file string) {
 	targetFile := path.Join(t.Dir, subDir, file)
 	sourceFile := path.Join(baseDir, subDir, file)
 	log.Println("Rendering", sourceFile, "to", targetFile, "for", name)
 
-	tpl, err := template.New(file).ParseFiles(sourceFile)
+	tpl, err := template.New(file).
+		Delims(r.config.Delims.Left, r.config.Delims.Right).
+		ParseFiles(sourceFile)
 	if err != nil {
 		log.Fatalf("Failed to parse template %s for %s: %s", sourceFile, name, err)
 	}
@@ -87,20 +101,27 @@ func renderTemplateForTarget(name string, t target, baseDir string, subDir strin
 	f.WriteString(buffer.String())
 }
 
-func main() {
-	configFile := "dirstencil.yaml"
-	log.Println("Loading config from", configFile)
-	conf := loadConfig(configFile)
-	log.Println("Found configuration with version", conf.Version, "and template dir", conf.TemplateDir)
-
+func (r *renderer) renderAll() {
+	log.Println("Rendering for", len(r.config.Targets), "targets")
 	wg := sync.WaitGroup{}
-	for name, t := range conf.Targets {
+	for name, t := range r.config.Targets {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			processTarget(name, t, conf.TemplateDir)
+			r.processTarget(name, t)
 		}()
 	}
 	wg.Wait()
+}
 
+func NewRenderer(configFile string) *renderer {
+	r := renderer{}
+	r.loadConfig(configFile)
+	return &r
+}
+
+func main() {
+	configFile := "dirstencil.yaml"
+	r := NewRenderer(configFile)
+	r.renderAll()
 }
