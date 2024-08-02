@@ -1,3 +1,3 @@
-# {{ genmsg }}
+# {{ .genmsg }}
 
-This is the sub-file for environment {{ envname }}.
+This is the sub-file for environment {{ .envname }}.
