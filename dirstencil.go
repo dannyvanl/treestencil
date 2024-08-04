@@ -18,8 +18,8 @@ type delims struct {
 }
 
 type target struct {
-	Dir  string            `yaml:"dir"`
-	Vars map[string]string `yaml:"vars"`
+	Dir  string                 `yaml:"dir"`
+	Vars map[string]interface{} `yaml:"vars"`
 }
 
 type configuration struct {

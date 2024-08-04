@@ -12,8 +12,10 @@ targets:
     dir: env1
     vars:
       envname: environment 1
+      includeX: true
 
   env 2:
     dir: env2
     vars:
       envname: environment 2
+      includeX: false

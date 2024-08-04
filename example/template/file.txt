@@ -1,3 +1,7 @@
 # {{ .genmsg }}
 
 This is the file for environment {{ .envname }}.
+
+{{ if .includeX }}
+This should be included if includeX is true.
+{{ end}}
