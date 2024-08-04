@@ -9,7 +9,7 @@ import (
 	"sync"
 	"text/template"
 
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 type delims struct {
