@@ -110,7 +110,9 @@ func (r *renderer) renderTemplateForTarget(name string, t target, baseDir string
 		return fmt.Errorf("failed create target file %s: %s", targetFile, err)
 	}
 	defer f.Close()
-	f.WriteString(buffer.String())
+	if _, err := f.WriteString(buffer.String()); err != nil {
+		return fmt.Errorf("failed to write rendered template to %s: %w", targetFile, err)
+	}
 	return nil
 }
 
