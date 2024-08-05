@@ -1,6 +1,6 @@
-# dirstencil
+# treestencil
 
-In very early development.
+In early development.
 
 TODO
 

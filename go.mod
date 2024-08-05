@@ -1,4 +1,4 @@
-module cogbin/dirstencil
+module dannyvanl/treestencil
 
 go 1.22.5
 
