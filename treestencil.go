@@ -117,7 +117,7 @@ func main() {
 	configFile := "treestencil.yaml"
 	config, err := loadConfig(configFile)
 	if err != nil {
-		log.Fatalf("Failed to load configuration: %w", err)
+		log.Fatalf("Failed to load configuration: %s", err)
 	}
 	r := newRenderer(*config)
 	if err := r.renderAll(); err != nil {
