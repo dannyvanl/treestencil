@@ -19,10 +19,11 @@ type target struct {
 }
 
 type configuration struct {
-	Version     int64             `yaml:"version"`
-	TemplateDir string            `yaml:"template-dir"`
-	Delims      delims            `yaml:"delims"`
-	Targets     map[string]target `yaml:"targets"`
+	Version     int64                  `yaml:"version"`
+	TemplateDir string                 `yaml:"template-dir"`
+	Delims      delims                 `yaml:"delims"`
+	Vars        map[string]interface{} `yaml:"vars"`
+	Targets     map[string]target      `yaml:"targets"`
 }
 
 func loadConfig(configFile string) (*configuration, error) {
