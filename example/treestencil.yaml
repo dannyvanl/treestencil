@@ -1,6 +1,6 @@
 version: 1
 
-template-dir: ./template
+templateDir: ./template
 
 delims:
   left: "{{"

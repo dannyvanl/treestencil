@@ -20,7 +20,7 @@ type target struct {
 
 type configuration struct {
 	Version     int64                  `yaml:"version"`
-	TemplateDir string                 `yaml:"template-dir"`
+	TemplateDir string                 `yaml:"templateDir"`
 	Delims      delims                 `yaml:"delims"`
 	Vars        map[string]interface{} `yaml:"vars"`
 	Targets     map[string]target      `yaml:"targets"`
